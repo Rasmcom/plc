@@ -107,9 +107,9 @@
     }
     .header-logo{display:flex;align-items:center;justify-content:center;height:100%}
     .header-logo img{max-width:82px;max-height:60px;object-fit:contain;display:block}
-    .header-text{text-align:center;line-height:1.08;font-weight:900}
+    .header-text{text-align:center;line-height:1.35;font-weight:800}
     .gov-line{display:block;color:#fff;font-size:13px;margin:1px 0;font-weight:800}
-    .gov-line.ministry{font-size:23px;font-weight:900;margin:1px 0 3px}
+    .gov-line.ministry{font-size:13px;font-weight:800;margin:1px 0}
     .editable-head{
       width:auto;
       min-width:160px;
@@ -122,6 +122,7 @@
       text-align:center;
       font-weight:800;
       font-size:13px;
+      line-height:1.35;
       padding:0 4px 1px;
     }
     .editable-head::placeholder{color:rgba(255,255,255,.72)}
@@ -323,7 +324,23 @@
       #preview.print-direct{display:block!important;position:static!important;inset:auto!important;z-index:auto!important;width:210mm!important;height:297mm!important;pointer-events:auto!important}
       #preview.print-direct .print-page{width:210mm!important;height:297mm!important}
     }
-  </style>
+  
+    .generate-btn.is-loading{
+      opacity:.72;
+      cursor:wait;
+      pointer-events:none;
+    }
+    .hijri-date-input{
+      text-align:center;
+      direction:ltr;
+      unicode-bidi:plaintext;
+    }
+    .hijri-date-input.is-invalid{
+      outline:2px solid #c64545;
+      outline-offset:-2px;
+      background:#fff6f6;
+    }
+</style>
 </head>
 <body>
   <div class="site-bar">
@@ -367,15 +384,15 @@
             </tr>
             <tr>
               <th>اليوم</th>
-              <td><input id="dayName" class="line-input persist" type="text" readonly></td>
+              <td><input id="dayName" class="line-input persist" type="text" placeholder="مثال: الأحد"></td>
               <th>التاريخ</th>
-              <td><input id="sessionDate" class="line-input persist" type="date"></td>
+              <td><input id="sessionDate" class="line-input persist hijri-date-input" type="text" placeholder="11 / 3 / 1448 هـ" autocomplete="off"></td>
             </tr>
             <tr>
               <th>مقر التنفيذ</th>
               <td><input id="venue" class="line-input persist" type="text"></td>
               <th>عدد الحاضرين</th>
-              <td><input id="attendanceCount" class="line-input" type="text" readonly></td>
+              <td><input id="attendanceCount" class="line-input persist" type="number" min="0" inputmode="numeric" placeholder="اكتب العدد"></td>
             </tr>
           </table>
 
@@ -434,8 +451,10 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
-    const STORAGE_KEY = 'professionalLearningCommunitiesForm_v1';
-    const arabicDays = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    const STORAGE_KEY = 'professionalLearningCommunitiesForm_v2';
+    // ضع هنا رابط Cloudflare Worker بعد نشره، مثال:
+    // const AI_API_URL = 'https://plc-ai.yourname.workers.dev';
+    const AI_API_URL = '';
     let objectiveVariant = 0;
     let resultVariant = 0;
 
@@ -527,56 +546,185 @@
       }
     };
 
-    function generateObjectives(){
+
+    function stripBullet(line){
+      return String(line || '')
+        .replace(/^[\s•\-–—\d٠-٩]+[.)\-–—]?\s*/u,'')
+        .trim();
+    }
+
+    function formatLines(lines){
+      return lines.map(stripBullet).filter(Boolean).map(line => `• ${line}`).join('\n');
+    }
+
+    function setButtonLoading(button, loading, normalText){
+      if(!button) return;
+      button.classList.toggle('is-loading', loading);
+      button.disabled = loading;
+      button.textContent = loading ? 'جارٍ التوليد...' : normalText;
+    }
+
+    async function callAiGenerator(mode){
+      const topic = requireTopic();
+      if(!topic) return null;
+
+      if(!AI_API_URL){
+        return null;
+      }
+
+      const response = await fetch(AI_API_URL, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          topic,
+          mode,
+          objectives: document.getElementById('objectives').value.trim()
+        })
+      });
+
+      let payload = null;
+      try{
+        payload = await response.json();
+      }catch(error){
+        throw new Error('استجابة خدمة التوليد غير صالحة.');
+      }
+
+      if(!response.ok){
+        throw new Error(payload?.error || 'تعذر الاتصال بخدمة التوليد.');
+      }
+
+      if(!Array.isArray(payload.objectives) || !Array.isArray(payload.results)){
+        throw new Error('صيغة نتيجة التوليد غير مكتملة.');
+      }
+
+      return payload;
+    }
+
+    function generateObjectivesLocal(){
       const raw = requireTopic();
       if(!raw) return;
       const topic = normalizeTopic(raw);
       const bank = themeBank[detectTheme(topic)];
       const lines = [
-        `• التعرف على المفاهيم والممارسات الرئيسة المرتبطة بموضوع «${topic}».`,
-        `• تعزيز ${bank.focus}.`,
-        `• تنمية قدرة المشاركين على ${bank.skill}.`,
-        `• تمكين المشاركين من إعداد ${bank.evidence}.`,
-        `• تبادل الخبرات المهنية حول التحديات والحلول المرتبطة بموضوع الجلسة.`,
-        `• تعزيز ${bank.practice}.`
+        `التعرف على المفاهيم والممارسات الرئيسة المرتبطة بموضوع «${topic}».`,
+        `تعزيز ${bank.focus}.`,
+        `تنمية قدرة المشاركين على ${bank.skill}.`,
+        `تمكين المشاركين من إعداد ${bank.evidence}.`,
+        `تبادل الخبرات المهنية حول التحديات والحلول المرتبطة بموضوع الجلسة.`,
+        `تعزيز ${bank.practice}.`
       ];
       const fixedFirst = lines[0];
       const others = rotate(lines.slice(1), objectiveVariant++);
-      document.getElementById('objectives').value = [fixedFirst,...others].join('\n');
+      document.getElementById('objectives').value = formatLines([fixedFirst,...others]);
       saveState();
     }
 
-    function generateResults(){
+    function generateResultsLocal(){
       const raw = requireTopic();
       if(!raw) return;
       const topic = normalizeTopic(raw);
       const bank = themeBank[detectTheme(topic)];
       const hasGoals = document.getElementById('objectives').value.trim().length > 0;
       const lines = [
-        `• تكوين تصور مهني أوضح لدى المشاركين حول موضوع «${topic}» وتطبيقاته في البيئة التعليمية.`,
-        `• تحديد عدد من الممارسات المناسبة التي تدعم ${bank.focus}.`,
-        `• إعداد ${bank.evidence}.`,
-        `• تبادل الخبرات والأفكار المهنية والوصول إلى حلول عملية للتحديات المطروحة.`,
-        `• الاتفاق على تطبيق ممارسات محددة ومتابعة أثرها خلال الفترة القادمة.`,
-        `• تعزيز ${bank.practice}.`
+        `تكوين تصور مهني أوضح لدى المشاركين حول موضوع «${topic}» وتطبيقاته في البيئة التعليمية.`,
+        `تحديد عدد من الممارسات المناسبة التي تدعم ${bank.focus}.`,
+        `إعداد ${bank.evidence}.`,
+        `تبادل الخبرات والأفكار المهنية والوصول إلى حلول عملية للتحديات المطروحة.`,
+        `الاتفاق على تطبيق ممارسات محددة ومتابعة أثرها خلال الفترة القادمة.`,
+        `تعزيز ${bank.practice}.`
       ];
       if(hasGoals){
-        lines[1] = `• ترجمة أهداف الجلسة إلى ممارسات عملية تدعم ${bank.focus}.`;
+        lines[1] = `ترجمة أهداف الجلسة إلى ممارسات عملية تدعم ${bank.focus}.`;
       }
       const fixedFirst = lines[0];
       const others = rotate(lines.slice(1), resultVariant++);
-      document.getElementById('results').value = [fixedFirst,...others].join('\n');
+      document.getElementById('results').value = formatLines([fixedFirst,...others]);
       saveState();
     }
 
-    function updateDay(){
-      const value = document.getElementById('sessionDate').value;
-      document.getElementById('dayName').value = value ? arabicDays[new Date(value + 'T12:00:00').getDay()] : '';
+    async function generateObjectives(){
+      const button = document.querySelector('[onclick="generateObjectives()"]');
+      setButtonLoading(button, true, 'توليد الأهداف');
+      try{
+        const payload = await callAiGenerator('objectives');
+        if(!payload){
+          generateObjectivesLocal();
+          return;
+        }
+        document.getElementById('objectives').value = formatLines(payload.objectives);
+        saveState();
+      }catch(error){
+        console.error(error);
+        alert(error.message || 'تعذر توليد الأهداف.');
+      }finally{
+        setButtonLoading(button, false, 'توليد الأهداف');
+      }
     }
 
-    function updateAttendanceCount(){
-      const count = [...document.querySelectorAll('.attendee-name')].filter(input => input.value.trim()).length;
-      document.getElementById('attendanceCount').value = count ? String(count) : '';
+    async function generateResults(){
+      const button = document.querySelector('[onclick="generateResults()"]');
+      setButtonLoading(button, true, 'توليد النتائج');
+      try{
+        const payload = await callAiGenerator('results');
+        if(!payload){
+          generateResultsLocal();
+          return;
+        }
+        document.getElementById('results').value = formatLines(payload.results);
+        saveState();
+      }catch(error){
+        console.error(error);
+        alert(error.message || 'تعذر توليد النتائج.');
+      }finally{
+        setButtonLoading(button, false, 'توليد النتائج');
+      }
+    }
+
+    function toWesternDigits(value){
+      const arabicIndic = '٠١٢٣٤٥٦٧٨٩';
+      const easternArabicIndic = '۰۱۲۳۴۵۶۷۸۹';
+      return String(value || '')
+        .replace(/[٠-٩]/g, d => String(arabicIndic.indexOf(d)))
+        .replace(/[۰-۹]/g, d => String(easternArabicIndic.indexOf(d)));
+    }
+
+    function normalizeHijriDate(showAlert = false){
+      const input = document.getElementById('sessionDate');
+      let value = toWesternDigits(input.value)
+        .replace(/هـ|ه‍?ـ?/g,'')
+        .trim();
+
+      if(!value){
+        input.classList.remove('is-invalid');
+        input.setCustomValidity('');
+        return true;
+      }
+
+      value = value.replace(/[.\-\\]/g,'/').replace(/\s+/g,' ');
+      const match = value.match(/^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/);
+
+      if(!match){
+        input.classList.add('is-invalid');
+        input.setCustomValidity('اكتب التاريخ الهجري بهذا الشكل: 11 / 3 / 1448 هـ');
+        if(showAlert) alert('اكتب التاريخ الهجري بهذا الشكل: 11 / 3 / 1448 هـ');
+        return false;
+      }
+
+      const day = Number(match[1]);
+      const month = Number(match[2]);
+      const year = Number(match[3]);
+
+      if(day < 1 || day > 30 || month < 1 || month > 12 || year < 1300 || year > 1600){
+        input.classList.add('is-invalid');
+        input.setCustomValidity('تحقق من اليوم والشهر والسنة الهجرية.');
+        if(showAlert) alert('تحقق من التاريخ الهجري المدخل.');
+        return false;
+      }
+
+      input.value = `${day} / ${month} / ${year} هـ`;
+      input.classList.remove('is-invalid');
+      input.setCustomValidity('');
+      return true;
     }
 
     function getPersistFields(){
@@ -590,7 +738,6 @@
         data[key] = el.value;
       });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      updateAttendanceCount();
     }
 
     function loadState(){
@@ -601,15 +748,13 @@
           if(Object.prototype.hasOwnProperty.call(data,key)) el.value = data[key];
         });
       }catch(error){console.warn('تعذر استعادة البيانات',error)}
-      updateDay();
-      updateAttendanceCount();
+
     }
 
     function clearForm(){
       if(!confirm('هل تريد مسح جميع بيانات الاستمارة؟')) return;
       getPersistFields().forEach(el => el.value = '');
-      document.getElementById('dayName').value = '';
-      document.getElementById('attendanceCount').value = '';
+
       localStorage.removeItem(STORAGE_KEY);
       objectiveVariant = 0;
       resultVariant = 0;
@@ -660,6 +805,11 @@
     }
 
     async function doPrint(){
+      if(!normalizeHijriDate(true)){
+        document.getElementById('sessionDate').focus();
+        return;
+      }
+      saveState();
       buildPrintSheet();
       const preview = document.getElementById('preview');
       const target = document.querySelector('#preview .print-page');
@@ -695,9 +845,9 @@
 
     document.addEventListener('input',e=>{
       if(e.target.matches('.persist')) saveState();
-      if(e.target.matches('.attendee-name')) updateAttendanceCount();
     });
-    document.getElementById('sessionDate').addEventListener('change',()=>{updateDay();saveState();});
+    document.getElementById('sessionDate').addEventListener('blur',()=>{normalizeHijriDate(false);saveState();});
+    document.getElementById('sessionDate').addEventListener('input',e=>e.target.classList.remove('is-invalid'));
     loadState();
   </script>
 </body>
