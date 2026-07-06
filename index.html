@@ -20,7 +20,7 @@
       --shadow:0 18px 45px rgba(12,72,80,.12);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+    html,body{margin:0;padding:0}
     body{
       font-family:"Cairo",Tahoma,Arial,sans-serif;
       background:linear-gradient(180deg,#edf4f7 0%,#f8fbfc 100%);
@@ -209,10 +209,6 @@
       text-align:right;
       overflow:auto;
       white-space:pre-wrap;
-      direction:rtl;
-      unicode-bidi:plaintext;
-      word-break:normal;
-      overflow-wrap:break-word;
     }
 
     .attendance-wrap{margin-top:8px}
@@ -277,12 +273,31 @@
       min-height:22px!important;
       line-height:1.35!important;
       padding:2px 4px!important;
+      font-family:"Cairo",Tahoma,Arial,sans-serif!important;
       font-size:10.5px!important;
       color:#16272e!important;
       font-weight:800!important;
       text-align:center!important;
-      white-space:pre-wrap!important;
+      direction:rtl!important;
+      unicode-bidi:isolate!important;
+      white-space:normal!important;
       word-break:normal!important;
+      overflow-wrap:normal!important;
+      letter-spacing:normal!important;
+      font-kerning:normal!important;
+      font-variant-ligatures:normal!important;
+      text-rendering:optimizeLegibility!important;
+    }
+    .print-field-value.print-date-value{
+      direction:ltr!important;
+      unicode-bidi:isolate!important;
+    }
+    .print-field-value > .print-arabic-span{
+      display:inline!important;
+      direction:rtl!important;
+      unicode-bidi:isolate!important;
+      white-space:normal!important;
+      letter-spacing:normal!important;
     }
     .print-textarea-value{
       display:block!important;
@@ -291,12 +306,34 @@
       height:106px!important;
       line-height:1.7!important;
       padding:7px 10px!important;
+      font-family:"Cairo",Tahoma,Arial,sans-serif!important;
       font-size:10.2px!important;
       color:#16272e!important;
       font-weight:700!important;
       text-align:right!important;
+      direction:rtl!important;
+      unicode-bidi:isolate!important;
       overflow:hidden!important;
-      white-space:pre-wrap!important;
+      white-space:normal!important;
+      word-break:normal!important;
+      overflow-wrap:normal!important;
+      letter-spacing:normal!important;
+      font-kerning:normal!important;
+      font-variant-ligatures:normal!important;
+      text-rendering:optimizeLegibility!important;
+    }
+    .print-ar-line{
+      display:block!important;
+      width:100%!important;
+      direction:rtl!important;
+      unicode-bidi:isolate!important;
+      text-align:right!important;
+      white-space:normal!important;
+      word-break:normal!important;
+      overflow-wrap:normal!important;
+      letter-spacing:normal!important;
+      margin:0!important;
+      padding:0!important;
     }
     .admin-fixed-person .print-field-value{min-height:24px!important;border-bottom:1px dotted #50646d;width:80%!important}
     .print-clone .generate-btn{display:none!important}
@@ -315,216 +352,11 @@
     .print-page .paper{box-shadow:none;margin:0}
 
     @media(max-width:850px){
-      body{background:#f4f8fa}
-      .site-bar{padding:8px 10px}
-      .site-bar-inner{
-        width:100%;
-        justify-content:center;
-        gap:8px;
-      }
-      .site-title{
-        width:100%;
-        text-align:center;
-        font-size:16px;
-      }
-      .site-actions{
-        width:100%;
-        justify-content:center;
-      }
-      .btn{
-        flex:1 1 145px;
-        max-width:190px;
-        padding:9px 10px;
-        font-size:13px;
-      }
-
-      .wrap{
-        width:100%;
-        margin:8px 0 18px;
-      }
-      .frame{
-        padding:0;
-        border:0;
-        border-radius:0;
-        box-shadow:none;
-        overflow:visible;
-        background:transparent;
-      }
-
-      /* شاشة الجوال مرنة، بينما نسخة PDF تبقى A4 ثابتة */
-      .frame > .paper{
-        width:100%;
-        height:auto;
-        min-height:0;
-        margin:0;
-        overflow:visible;
-        box-shadow:none;
-      }
-      .frame > .paper > .content{
-        height:auto;
-        min-height:0;
-        padding:12px 10px 20px;
-      }
-
-      .header-top{
-        min-height:0;
-        grid-template-columns:78px minmax(0,1fr);
-        gap:6px;
-        padding:10px 9px 11px;
-        border-radius:0 0 14px 14px;
-      }
-      .header-logo img{
-        max-width:72px;
-        max-height:54px;
-      }
-      .header-text{line-height:1.45}
-      .gov-line,
-      .gov-line.ministry,
-      .editable-head{
-        font-size:12px;
-        font-weight:800;
-      }
-      .editable-head{
-        min-width:90px;
-        width:min(210px,100%);
-      }
-
-      .form-title{
-        max-width:calc(100% - 20px);
-        margin:10px auto 8px;
-        padding:6px 16px;
-        font-size:15px;
-        text-align:center;
-      }
-
-      .info-table,
-      .attendance-table{
-        font-size:12px;
-      }
-      .info-table th,
-      .info-table td,
-      .attendance-table th,
-      .attendance-table td{
-        padding:5px 4px;
-      }
-      .info-table,
-      .info-table tbody{
-        display:block;
-        width:100%;
-      }
-      .info-table tr{
-        display:grid;
-        grid-template-columns:34% 66%;
-        width:100%;
-      }
-      .info-table th,
-      .info-table td{
-        width:auto!important;
-        min-width:0;
-      }
-      .info-table td[colspan]{
-        grid-column:auto;
-      }
-
-      .line-input{
-        min-height:34px;
-        height:34px;
-        padding:4px 5px;
-        font-size:15px;
-        line-height:1.5;
-      }
-
-      .section-block{margin-top:10px}
-      .section-heading{
-        min-height:40px;
-        padding:5px 7px;
-        gap:6px;
-      }
-      .section-title{font-size:15px}
-      .generate-btn{
-        padding:6px 9px;
-        font-size:12px;
-      }
-      .section-textarea{
-        min-height:220px;
-        height:220px;
-        padding:11px 12px;
-        font-size:15px;
-        line-height:1.9;
-        font-weight:700;
-        overflow:auto;
-        -webkit-overflow-scrolling:touch;
-        direction:rtl;
-        text-align:right;
-        unicode-bidi:plaintext;
-        word-break:normal;
-        overflow-wrap:break-word;
-      }
-
-      .attendance-title{
-        font-size:14px;
-        padding:6px 8px;
-      }
-      .attendance-table col.num{width:8%}
-      .attendance-table col.name{width:42%}
-      .attendance-table col.spec{width:25%}
-      .attendance-table col.work{width:25%}
-      .attendance-table col.sign{width:0%}
-      .attendance-table th:nth-child(5),
-      .attendance-table td:nth-child(5){
-        display:none;
-      }
-      .attendance-table td{
-        height:42px;
-        padding:3px;
-      }
-      .attendance-table .line-input{
-        min-height:34px;
-        height:34px;
-        font-size:13px;
-        padding:3px;
-      }
-
-      .frame > .paper .admin-fixed-footer{
-        position:static;
-        right:auto;
-        left:auto;
-        bottom:auto;
-        margin:18px 4px 2px;
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:18px;
-      }
-      .admin-fixed-role{font-size:13px}
-      .admin-name-input{
-        width:94%;
-        min-height:34px;
-        font-size:14px;
-      }
-    }
-
-    @media(max-width:430px){
-      .header-top{
-        grid-template-columns:70px minmax(0,1fr);
-      }
-      .header-logo img{
-        max-width:64px;
-        max-height:48px;
-      }
-      .gov-line,
-      .gov-line.ministry,
-      .editable-head{
-        font-size:11px;
-      }
-      .form-title{font-size:14px}
-      .info-table,
-      .attendance-table{font-size:11.5px}
-      .section-textarea{
-        min-height:235px;
-        height:235px;
-        font-size:14px;
-        line-height:1.95;
-      }
+      .site-bar-inner{justify-content:center}
+      .site-title{width:100%;text-align:center}
+      .site-actions{justify-content:center}
+      .frame{padding:8px;border-radius:14px}
+      .paper{transform-origin:top right}
     }
     @media print{
       @page{size:A4 portrait;margin:0}
@@ -549,6 +381,109 @@
       outline-offset:-2px;
       background:#fff6f6;
     }
+
+    .signature-cell{
+      position:relative;
+      padding:2px!important;
+    }
+    .signature-trigger{
+      width:100%;
+      height:24px;
+      border:1px dashed #7f9aa5;
+      border-radius:5px;
+      background:#f8fbfc;
+      color:#47636e;
+      font-size:9px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .signature-trigger:hover{background:#edf6f8}
+    .signature-preview{
+      display:none;
+      width:100%;
+      height:26px;
+      object-fit:contain;
+      cursor:pointer;
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+    .signature-cell.has-signature .signature-preview{display:block}
+    .signature-cell.has-signature .signature-trigger{display:none}
+    .print-clone .signature-trigger{display:none!important}
+    .print-clone .signature-preview{
+      display:block!important;
+      width:100%!important;
+      height:26px!important;
+      object-fit:contain!important;
+    }
+
+    .signature-modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      background:rgba(10,38,48,.62);
+      padding:18px;
+      align-items:center;
+      justify-content:center;
+    }
+    .signature-modal.open{display:flex}
+    .signature-dialog{
+      width:min(560px,100%);
+      background:#fff;
+      border-radius:16px;
+      box-shadow:0 24px 60px rgba(0,0,0,.25);
+      padding:16px;
+      direction:rtl;
+    }
+    .signature-dialog h3{
+      margin:0 0 4px;
+      color:#16434d;
+      font-size:17px;
+      font-weight:900;
+    }
+    .signature-dialog p{
+      margin:0 0 12px;
+      color:#607681;
+      font-size:12px;
+      font-weight:700;
+    }
+    .signature-pad-wrap{
+      width:100%;
+      height:220px;
+      border:2px solid #9aadb5;
+      border-radius:10px;
+      overflow:hidden;
+      background:#fff;
+      touch-action:none;
+    }
+    #signaturePad{
+      display:block;
+      width:100%;
+      height:100%;
+      touch-action:none;
+      cursor:crosshair;
+    }
+    .signature-actions{
+      display:flex;
+      gap:8px;
+      justify-content:flex-start;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .signature-actions button{
+      border:0;
+      border-radius:9px;
+      padding:9px 15px;
+      font-family:inherit;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .sig-save{background:#0a6a68;color:#fff}
+    .sig-clear{background:#fef3c7;color:#7a5300}
+    .sig-cancel{background:#e8eef1;color:#334e59}
+
 </style>
 </head>
 <body>
@@ -631,11 +566,11 @@
                 <th>م</th><th>الاسم رباعي</th><th>التخصص</th><th>مقر العمل</th><th>التوقيع</th>
               </tr>
               <tbody>
-                <tr><td>١</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td></td></tr>
-                <tr><td>٢</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td></td></tr>
-                <tr><td>٣</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td></td></tr>
-                <tr><td>٤</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td></td></tr>
-                <tr><td>٥</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td></td></tr>
+                <tr><td>١</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td class="signature-cell" data-signature-index="0"><button class="signature-trigger" type="button" onclick="openSignature(0)">توقيع إلكتروني</button><img class="signature-preview" alt="التوقيع الإلكتروني" onclick="openSignature(0)"></td></tr>
+                <tr><td>٢</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td class="signature-cell" data-signature-index="1"><button class="signature-trigger" type="button" onclick="openSignature(1)">توقيع إلكتروني</button><img class="signature-preview" alt="التوقيع الإلكتروني" onclick="openSignature(1)"></td></tr>
+                <tr><td>٣</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td class="signature-cell" data-signature-index="2"><button class="signature-trigger" type="button" onclick="openSignature(2)">توقيع إلكتروني</button><img class="signature-preview" alt="التوقيع الإلكتروني" onclick="openSignature(2)"></td></tr>
+                <tr><td>٤</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td class="signature-cell" data-signature-index="3"><button class="signature-trigger" type="button" onclick="openSignature(3)">توقيع إلكتروني</button><img class="signature-preview" alt="التوقيع الإلكتروني" onclick="openSignature(3)"></td></tr>
+                <tr><td>٥</td><td><input class="line-input attendee-name persist" type="text"></td><td><input class="line-input persist" type="text"></td><td><input class="line-input persist" type="text"></td><td class="signature-cell" data-signature-index="4"><button class="signature-trigger" type="button" onclick="openSignature(4)">توقيع إلكتروني</button><img class="signature-preview" alt="التوقيع الإلكتروني" onclick="openSignature(4)"></td></tr>
               </tbody>
             </table>
           </div>
@@ -655,6 +590,22 @@
     </div>
   </main>
 
+
+  <div id="signatureModal" class="signature-modal" aria-hidden="true">
+    <div class="signature-dialog" role="dialog" aria-modal="true" aria-labelledby="signatureTitle">
+      <h3 id="signatureTitle">التوقيع الإلكتروني</h3>
+      <p>وقّع بإصبعك على الجوال أو بالفأرة، ثم اضغط حفظ التوقيع.</p>
+      <div class="signature-pad-wrap">
+        <canvas id="signaturePad"></canvas>
+      </div>
+      <div class="signature-actions">
+        <button class="sig-save" type="button" onclick="saveSignature()">حفظ التوقيع</button>
+        <button class="sig-clear" type="button" onclick="clearSignaturePad()">مسح</button>
+        <button class="sig-cancel" type="button" onclick="closeSignature()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
   <div id="preview"><div id="printSheet" class="print-page"></div></div>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -666,6 +617,198 @@
     const AI_API_URL = '';
     let objectiveVariant = 0;
     let resultVariant = 0;
+
+    let activeSignatureIndex = null;
+    let signatureDrawing = false;
+    let signatureLastPoint = null;
+
+    function getSignatureCells(){
+      return [...document.querySelectorAll('.signature-cell[data-signature-index]')];
+    }
+
+    function getSignatureData(){
+      return getSignatureCells().map(cell => {
+        const img = cell.querySelector('.signature-preview');
+        return img?.getAttribute('src') || '';
+      });
+    }
+
+    function applySignatureData(items){
+      const signatures = Array.isArray(items) ? items : [];
+      getSignatureCells().forEach((cell,index)=>{
+        const img = cell.querySelector('.signature-preview');
+        const value = signatures[index] || '';
+        if(img){
+          if(value) img.setAttribute('src', value);
+          else img.removeAttribute('src');
+        }
+        cell.classList.toggle('has-signature', Boolean(value));
+      });
+    }
+
+    function setupSignatureCanvas(){
+      const canvas = document.getElementById('signaturePad');
+      const wrap = canvas.parentElement;
+      const ratio = Math.max(2, window.devicePixelRatio || 1);
+      const rect = wrap.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(rect.width * ratio));
+      canvas.height = Math.max(1, Math.round(rect.height * ratio));
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+      ctx.lineWidth = 2.2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#102f3a';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,rect.width,rect.height);
+      return {canvas,ctx,rect};
+    }
+
+    function canvasPoint(event){
+      const canvas = document.getElementById('signaturePad');
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+      };
+    }
+
+    function openSignature(index){
+      activeSignatureIndex = Number(index);
+      const modal = document.getElementById('signatureModal');
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      requestAnimationFrame(()=>{
+        const {canvas,ctx,rect} = setupSignatureCanvas();
+        const current = getSignatureData()[activeSignatureIndex];
+        if(current){
+          const img = new Image();
+          img.onload = ()=>{
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0,0,rect.width,rect.height);
+            ctx.drawImage(img,0,0,rect.width,rect.height);
+          };
+          img.src = current;
+        }
+        canvas.focus?.();
+      });
+    }
+
+    function closeSignature(){
+      document.getElementById('signatureModal').classList.remove('open');
+      document.getElementById('signatureModal').setAttribute('aria-hidden','true');
+      activeSignatureIndex = null;
+      signatureDrawing = false;
+      signatureLastPoint = null;
+    }
+
+    function clearSignaturePad(){
+      const {ctx,rect} = setupSignatureCanvas();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,rect.width,rect.height);
+    }
+
+    function trimSignatureCanvas(sourceCanvas){
+      const ctx = sourceCanvas.getContext('2d');
+      const {width,height} = sourceCanvas;
+      const image = ctx.getImageData(0,0,width,height);
+      const data = image.data;
+      let minX = width, minY = height, maxX = -1, maxY = -1;
+
+      for(let y=0;y<height;y++){
+        for(let x=0;x<width;x++){
+          const i = (y * width + x) * 4;
+          const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+          const isInk = a > 10 && (r < 245 || g < 245 || b < 245);
+          if(isInk){
+            if(x < minX) minX = x;
+            if(y < minY) minY = y;
+            if(x > maxX) maxX = x;
+            if(y > maxY) maxY = y;
+          }
+        }
+      }
+
+      if(maxX < 0 || maxY < 0) return null;
+
+      const pad = Math.max(8, Math.round((window.devicePixelRatio || 1) * 6));
+      minX = Math.max(0, minX - pad);
+      minY = Math.max(0, minY - pad);
+      maxX = Math.min(width - 1, maxX + pad);
+      maxY = Math.min(height - 1, maxY + pad);
+
+      const out = document.createElement('canvas');
+      out.width = maxX - minX + 1;
+      out.height = maxY - minY + 1;
+      out.getContext('2d').drawImage(
+        sourceCanvas,
+        minX,minY,out.width,out.height,
+        0,0,out.width,out.height
+      );
+      return out;
+    }
+
+    function saveSignature(){
+      if(activeSignatureIndex === null) return;
+      const canvas = document.getElementById('signaturePad');
+      const trimmed = trimSignatureCanvas(canvas);
+      if(!trimmed){
+        alert('أضف التوقيع أولًا.');
+        return;
+      }
+      const cell = document.querySelector(`.signature-cell[data-signature-index="${activeSignatureIndex}"]`);
+      const img = cell?.querySelector('.signature-preview');
+      if(!cell || !img) return;
+      img.src = trimmed.toDataURL('image/png');
+      cell.classList.add('has-signature');
+      saveState();
+      closeSignature();
+    }
+
+    function initSignaturePadEvents(){
+      const canvas = document.getElementById('signaturePad');
+      if(!canvas) return;
+
+      canvas.addEventListener('pointerdown',event=>{
+        event.preventDefault();
+        canvas.setPointerCapture?.(event.pointerId);
+        signatureDrawing = true;
+        signatureLastPoint = canvasPoint(event);
+      });
+
+      canvas.addEventListener('pointermove',event=>{
+        if(!signatureDrawing || !signatureLastPoint) return;
+        event.preventDefault();
+        const point = canvasPoint(event);
+        const ratio = Math.max(2, window.devicePixelRatio || 1);
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(ratio,0,0,ratio,0,0);
+        ctx.lineWidth = 2.2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#102f3a';
+        ctx.beginPath();
+        ctx.moveTo(signatureLastPoint.x, signatureLastPoint.y);
+        ctx.lineTo(point.x, point.y);
+        ctx.stroke();
+        signatureLastPoint = point;
+      });
+
+      const stop = event=>{
+        if(event) event.preventDefault();
+        signatureDrawing = false;
+        signatureLastPoint = null;
+      };
+      canvas.addEventListener('pointerup',stop);
+      canvas.addEventListener('pointercancel',stop);
+      canvas.addEventListener('pointerleave',event=>{
+        if(signatureDrawing && event.buttons === 0) stop(event);
+      });
+
+      document.getElementById('signatureModal').addEventListener('click',event=>{
+        if(event.target.id === 'signatureModal') closeSignature();
+      });
+    }
 
     function topicText(){
       return (document.getElementById('programName').value || '').trim();
@@ -946,6 +1089,7 @@
         const key = el.id || `field_${index}`;
         data[key] = el.value;
       });
+      data.__signatures = getSignatureData();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
@@ -956,6 +1100,7 @@
           const key = el.id || `field_${index}`;
           if(Object.prototype.hasOwnProperty.call(data,key)) el.value = data[key];
         });
+        applySignatureData(data.__signatures);
       }catch(error){console.warn('تعذر استعادة البيانات',error)}
 
     }
@@ -963,6 +1108,7 @@
     function clearForm(){
       if(!confirm('هل تريد مسح جميع بيانات الاستمارة؟')) return;
       getPersistFields().forEach(el => el.value = '');
+      applySignatureData([]);
 
       localStorage.removeItem(STORAGE_KEY);
       objectiveVariant = 0;
@@ -978,7 +1124,22 @@
         const value = el.value || '';
         const div = document.createElement('div');
         div.className = 'print-field-value';
-        div.textContent = value;
+        div.setAttribute('lang','ar');
+
+        const isHijriDate = el.id === 'sessionDate';
+        if(isHijriDate){
+          div.classList.add('print-date-value');
+          div.setAttribute('dir','ltr');
+          div.textContent = value;
+        }else{
+          div.setAttribute('dir','rtl');
+          const span = document.createElement('span');
+          span.className = 'print-arabic-span';
+          span.setAttribute('dir','rtl');
+          span.setAttribute('lang','ar');
+          span.textContent = value;
+          div.appendChild(span);
+        }
         target.replaceWith(div);
       });
 
@@ -989,7 +1150,18 @@
         if(!target) return;
         const div = document.createElement('div');
         div.className = 'print-textarea-value';
-        div.textContent = el.value || '';
+        div.setAttribute('dir','rtl');
+        div.setAttribute('lang','ar');
+
+        const lines = String(el.value || '').split(/\r?\n/);
+        lines.forEach(line=>{
+          const row = document.createElement('div');
+          row.className = 'print-ar-line';
+          row.setAttribute('dir','rtl');
+          row.setAttribute('lang','ar');
+          row.textContent = line || '\u00a0';
+          div.appendChild(row);
+        });
         target.replaceWith(div);
       });
     }
@@ -1019,6 +1191,7 @@
         return;
       }
       saveState();
+      if(document.fonts && document.fonts.ready) await document.fonts.ready;
       buildPrintSheet();
       const preview = document.getElementById('preview');
       const target = document.querySelector('#preview .print-page');
@@ -1026,7 +1199,6 @@
       preview.classList.add('pdf-capture');
       preview.style.display='block';
       try{
-        if(document.fonts && document.fonts.ready) await document.fonts.ready;
         await waitForImages(target);
         if(typeof html2canvas === 'undefined' || !window.jspdf) throw new Error('تعذر تحميل مكتبات توليد PDF.');
         const scale = Math.max(2, window.devicePixelRatio || 1);
@@ -1057,6 +1229,7 @@
     });
     document.getElementById('sessionDate').addEventListener('blur',()=>{normalizeHijriDate(false);saveState();});
     document.getElementById('sessionDate').addEventListener('input',e=>e.target.classList.remove('is-invalid'));
+    initSignaturePadEvents();
     loadState();
   </script>
 </body>
